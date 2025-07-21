@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -29,7 +28,6 @@ fun HomeScreen(
     navController: NavHostController
 ) {
     val mainState = viewModel.mainState.collectAsStateWithLifecycle().value
-    val cartQuantity = mainState.meals.sumOf { it.quantity }
 
     Column(
         verticalArrangement = Arrangement.Center,
@@ -39,7 +37,7 @@ fun HomeScreen(
             modifier = modifier
                 .padding(top = 16.dp)
                 .align(Alignment.End),
-            quantity = cartQuantity,
+            quantity = mainState.cartCount,
             onCartClick = {
                 navController.navigate(Screen.Cart.route)
             }
@@ -65,10 +63,11 @@ fun HomeScreen(
 
         CategoryRow(
             meals = mainState.meals,
-            onEvent = {
-                viewModel.onEvent(it)
-            },
+            onEvent = { viewModel.onEvent(it) },
+            categories = mainState.categories,
+            filteredMeals = { mainState.filteredMeals }
         )
+
     }
 }
 

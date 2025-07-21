@@ -70,4 +70,14 @@ object DataSource {
         return meals
     }
 
+    fun getCategories(): List<String> {
+        return listOf(
+            Category.Hottest.title,
+            Category.Popular.title,
+            Category.NewCombo.title,
+            Category.Top.title
+        )
+    }
+
+
 }

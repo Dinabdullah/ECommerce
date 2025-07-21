@@ -22,27 +22,59 @@ class MainViewModel : ViewModel() {
             is MainContract.MealEvents.PlusClick -> onPlusClick(event.id)
             is MainContract.MealEvents.CategoryClick -> onCategoryClick(event.categoryId)
             is MainContract.MealEvents.CartClick -> onCartClick()
+            is MainContract.MealEvents.GetCartCount -> getCartCount()
+        }
+    }
 
+
+    private fun getCartCount() {
+        _mainState.update { it ->
+            it.copy(
+                cartCount = it.meals.sumOf { it.quantity }
+
+            )
         }
     }
 
     private fun onCartClick() {
     }
 
-    private fun onCategoryClick(categoryId: Int) {}
+
+
+    private fun onCategoryClick(categoryIndex: Int) {
+        val selectedCategory = _mainState.value.categories.getOrNull(categoryIndex)
+        val filtered = _mainState.value.meals.filter {
+            it.category?.title == selectedCategory
+        }
+
+        _mainState.update {
+            it.copy(
+                selectedCategoryIndex = categoryIndex,
+                filteredMeals = filtered
+            )
+        }
+    }
+
+
+
 
     private fun onPlusClick(id: Int) {
         _mainState.update {
             it.copy(
                 meals = it.meals.map { meal ->
-                    if (meal.id == id)
+                    if (meal.id == id) {
                         meal.copy(quantity = meal.quantity + 1)
-                    else
+
+                    } else {
                         meal
+                    }
+
                 } as ArrayList
             )
         }
+        getCartCount()
     }
+
 
     private fun onItemClick(id: Int) {}
 
@@ -61,10 +93,15 @@ class MainViewModel : ViewModel() {
 
     private fun loadProducts() {
         val meals = DataSource.getMeals()
+        val categories = DataSource.getCategories()
+        val selectedCategory = categories.getOrNull(0)
         _mainState.value = _mainState.value.copy(
-            meals = meals
+            meals = meals,
+            categories = categories,
+            filteredMeals = meals.filter { it.category?.title == selectedCategory }
         )
     }
+
 
 
 }

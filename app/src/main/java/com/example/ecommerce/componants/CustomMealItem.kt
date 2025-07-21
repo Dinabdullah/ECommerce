@@ -29,6 +29,7 @@ import com.example.ecommerce.viewmodel.MainContract
 @Composable
 fun CustomMealItem(
     modifier: Modifier = Modifier, meal: Meal,
+    //break clickes
     onEvent: (MainContract.MealEvents) -> Unit = {},
 ) {
     Column(
@@ -43,7 +44,7 @@ fun CustomMealItem(
             ),
 
         ) {
-        Row(modifier = modifier.align(Alignment.End),) {
+        Row(modifier = modifier.align(Alignment.End)) {
             IconBox(
                 meal = meal,
                 onfavItemClick = { onEvent.invoke(MainContract.MealEvents.FavouriteClick(meal.id)) },

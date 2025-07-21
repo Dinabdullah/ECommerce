@@ -16,10 +16,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.ecommerce.model.Category
 import com.example.ecommerce.model.Meal
 import com.example.ecommerce.viewmodel.MainContract
 import kotlinx.coroutines.launch
@@ -28,10 +26,10 @@ import kotlinx.coroutines.launch
 fun CategoryRow(
     modifier: Modifier = Modifier,
     meals: List<Meal>,
+    filteredMeals: () -> List<Meal>,
+    categories: List<String>,
     onEvent: (MainContract.MealEvents) -> Unit
 ) {
-    //val categories = Category.entries.toTypedArray()
-    val categories = Category.values()
     val pagerState = rememberPagerState(initialPage = 0) { categories.size }
     val scope = rememberCoroutineScope()
 
@@ -39,10 +37,10 @@ fun CategoryRow(
         TabRow(
             selectedTabIndex = pagerState.currentPage,
             indicator = { tabPositions ->
-                TabRowDefaults.Indicator(
+                TabRowDefaults.SecondaryIndicator(
                     modifier = modifier
                         .tabIndicatorOffset(tabPositions[pagerState.currentPage]),
-                    color = Color(0xFFF08626)
+                    height = 1.dp, color = Color(0xFFF08626)
                 )
             }) {
             categories.forEachIndexed { index, category ->
@@ -60,7 +58,7 @@ fun CategoryRow(
                     },
                     text = {
                         Text(
-                            category.title,
+                            categories[index],
                             // color = if (isSelected) Color.Black else Color.Black.copy(alpha = 0.6f),
                             fontSize = if (isSelected) 16.sp else 12.sp,
                             fontWeight = FontWeight.W500
@@ -73,14 +71,12 @@ fun CategoryRow(
         }
 
         HorizontalPager(state = pagerState) { page ->
-            val currentCategory = categories[page]
-            val filteredMeals = meals.filter { it.category == currentCategory }
-
             CategoryList(
-                meals = filteredMeals,
+                meals = filteredMeals(),
                 onEvent = onEvent,
             )
         }
+
     }
 }
 
@@ -101,11 +97,11 @@ fun CategoryList(
     }
 }
 
-@Preview
-@Composable
-private fun CategoryRowPreview() {
-    CategoryRow(
-        meals = listOf(),
-        onEvent = {}
-    )
-}
+//@Preview
+//@Composable
+//private fun CategoryRowPreview() {
+//    CategoryRow(
+//        meals = listOf(),
+//        onEvent = {}
+//    )
+//}
